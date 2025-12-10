@@ -1,0 +1,1425 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>MIIC Management Structure Reform Framework – Slide Deck</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&family=Montserrat:wght@700;900&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+
+    <style>
+      :root{
+        --primary:#0c3b5a;
+        --secondary:#fbaf40;
+        --bg:#ffffff;
+        --card:#f9f9fb;
+        --text:#111111;
+        --text-dim:#55606b;
+        --border:#e3e6ec;
+        --shadow:0 10px 34px rgba(0,0,0,.08);
+        --maxRowW:1140px;
+        --headerH:70px;
+        --slideAnim:360ms;
+
+        --chartH: clamp(180px, 30vh, 320px);
+        --chartH-compact: clamp(140px, 24vh, 220px);
+      }
+
+      *{box-sizing:border-box}
+      html,body{height:100%}
+      body{
+        margin:0;
+        font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;
+        color:var(--text);
+        background:var(--bg);
+        overflow:hidden; /* deck stays fixed; slides scroll internally */
+      }
+
+      /* Header */
+      header{
+        position:fixed;
+        inset:0 0 auto 0;
+        height:var(--headerH);
+        display:flex;
+        align-items:center;
+        gap:14px;
+        padding:0 18px;
+        background:#fff;
+        border-bottom:3px solid var(--secondary);
+        z-index:10;
+        color:var(--primary);
+      }
+      header img{
+        height:42px;
+        width:auto;
+        object-fit:contain;
+        background:#fff;
+        border-radius:8px;
+      }
+      header .title{
+        font-weight:800;
+        letter-spacing:.2px;
+        color:var(--primary);
+        line-height:1.1;
+      }
+      header .badge{
+        margin-left:auto;
+        font-size:12px;
+        color:var(--text-dim);
+        font-weight:600;
+        white-space:nowrap;
+      }
+      .hdr-progress{
+        position:absolute;
+        left:0;
+        bottom:0;
+        height:3px;
+        width:100%;
+        background:transparent;
+      }
+      .hdr-progress > div{
+        height:100%;
+        width:0%;
+        background:linear-gradient(90deg,var(--primary),var(--secondary));
+        transition:width .28s ease;
+      }
+
+      /* Deck */
+      .deck{
+        position:fixed;
+        inset:var(--headerH) 0 78px 0;
+        display:flex;
+        align-items:center;
+        justify-content:center;
+      }
+
+      .slide{
+        position:absolute;
+        width:min(1200px,92vw);
+        height:min(690px,78vh);
+        background:var(--card);
+        border:1px solid var(--border);
+        border-radius:24px;
+        padding:28px 32px 34px;
+        box-shadow:var(--shadow);
+
+        display:none;
+        flex-direction:column;
+        align-items:center;
+
+        /* Default: start at top so long slides feel natural */
+        justify-content:flex-start;
+        text-align:center;
+
+        /* ✅ Scroll fixed */
+        overflow:auto;
+        overscroll-behavior:contain;
+        -webkit-overflow-scrolling:touch;
+
+        opacity:0;
+        transform:translateY(12px) scale(.985);
+        transition:opacity var(--slideAnim) ease, transform var(--slideAnim) ease;
+        pointer-events:none;
+      }
+
+      /* ✅ Auto-centre class (applied by JS when content fits) */
+      .slide.center{
+        justify-content:center;
+      }
+
+      .slide.active{
+        display:flex;
+        opacity:1;
+        transform:translateY(0) scale(1);
+        pointer-events:auto;
+        z-index:2;
+      }
+      .slide.leaving{
+        display:flex;
+        opacity:0;
+        transform:translateY(-8px) scale(.99);
+        z-index:1;
+      }
+
+      /* Headings */
+      .slide h1{
+        margin:0 0 14px;
+        font-size:32px;
+        font-weight:900;
+        font-family:Inter,sans-serif;
+        color:var(--primary);
+        line-height:1.2;
+      }
+      .sub{
+        color:var(--text-dim);
+        font-size:16px;
+        margin:0 0 14px;
+      }
+      .note{
+        color:var(--text-dim);
+        font-size:13px;
+        margin-top:10px;
+      }
+
+      /* Title slide */
+      section.title-slide{
+        background:
+          radial-gradient(1100px 700px at 12% 10%, rgba(251,175,64,.20), transparent 55%),
+          radial-gradient(900px 520px at 85% 18%, rgba(12,59,90,.12), transparent 60%),
+          linear-gradient(180deg, #ffffff 0%, #fbfbfd 100%);
+      }
+      section.title-slide .kicker{
+        display:inline-flex;
+        align-items:center;
+        gap:10px;
+        padding:8px 12px;
+        border-radius:999px;
+        border:1px solid rgba(12,59,90,.22);
+        background:#fff;
+        color:var(--primary);
+        font-weight:800;
+        font-size:12px;
+        margin-bottom:16px;
+      }
+      section.title-slide h1{
+        margin:0 0 16px;
+        font-size:58px;
+        font-weight:900;
+        font-family:Montserrat,sans-serif;
+        color:var(--primary);
+        line-height:1.05;
+      }
+      section.title-slide .sub{
+        font-size:20px;
+        margin-bottom:10px;
+      }
+      section.title-slide .meta{
+        margin-top:10px;
+        display:flex;
+        gap:10px;
+        flex-wrap:wrap;
+        justify-content:center;
+      }
+      .pill{
+        display:inline-flex;
+        align-items:center;
+        gap:8px;
+        padding:8px 12px;
+        border-radius:999px;
+        border:1px solid rgba(12,59,90,.25);
+        background:rgba(251,175,64,.90);
+        color:#111;
+        font-weight:800;
+        font-size:13px;
+      }
+
+      /* Layout helpers */
+      .row{
+        display:grid;
+        gap:16px;
+        width:100%;
+        max-width:var(--maxRowW);
+        margin:0 auto;
+        align-items:stretch;
+      }
+      .row.cols-2{ grid-template-columns:repeat(auto-fit,minmax(340px,1fr)) }
+      .row.cols-3{ grid-template-columns:repeat(auto-fit,minmax(280px,1fr)) }
+      .row.cols-4{ grid-template-columns:repeat(auto-fit,minmax(220px,1fr)) }
+      .row.cols-split{ grid-template-columns:minmax(280px,1fr) minmax(340px,1.1fr) }
+      .left{ text-align:left }
+
+      .card{
+        background:#fff;
+        border:1px solid var(--border);
+        border-radius:16px;
+        padding:14px;
+        min-height:0;
+      }
+      .card h3{
+        margin:0 0 8px;
+        font-size:16px;
+        color:var(--primary);
+      }
+      .bullets{
+        margin:0;
+        padding-left:18px;
+        color:var(--text-dim);
+        line-height:1.5;
+      }
+      .callout{
+        border:1px dashed rgba(12,59,90,.35);
+        background:linear-gradient(180deg,#fff,rgba(12,59,90,.03));
+      }
+
+      /* Chart cards */
+      .card.chart-card{
+        display:flex;
+        flex-direction:column;
+        height:100%;
+      }
+      .chart-box{
+        position:relative;
+        flex:1;
+        min-height:var(--chartH);
+        width:100%;
+        contain:layout paint size style;
+      }
+      .chart-box.compact{ min-height:var(--chartH-compact); }
+      .chart-box > canvas{
+        position:absolute;
+        inset:0;
+        width:100% !important;
+        height:100% !important;
+      }
+
+      /* Org blocks */
+      .org{
+        display:grid;
+        gap:12px;
+        width:100%;
+        max-width:var(--maxRowW);
+      }
+      .org .tier{
+        display:grid;
+        gap:12px;
+      }
+      .org .tier.cols-1{ grid-template-columns:1fr; }
+      .org .tier.cols-2{ grid-template-columns:repeat(2,minmax(240px,1fr)); }
+      .org .tier.cols-3{ grid-template-columns:repeat(3,minmax(220px,1fr)); }
+      .org .tier.cols-4{ grid-template-columns:repeat(4,minmax(200px,1fr)); }
+
+      .box{
+        background:#fff;
+        border:1px solid var(--border);
+        border-radius:16px;
+        padding:12px;
+        text-align:left;
+      }
+      .box .top{
+        display:flex;
+        align-items:center;
+        gap:10px;
+        font-weight:900;
+        color:var(--primary);
+        margin-bottom:8px;
+      }
+      .box .top i{ color:var(--primary) }
+      .box ul{
+        margin:0;
+        padding-left:18px;
+        color:var(--text-dim);
+        line-height:1.45;
+        font-size:13.5px;
+      }
+      .box.accent{
+        border:2px solid rgba(251,175,64,.85);
+        background:linear-gradient(180deg,#fff,rgba(251,175,64,.08));
+      }
+
+      /* --- Governance Spine (simple grid) --- */
+      .spine-grid{
+        width:100%;
+        max-width: var(--maxRowW);
+        display:grid;
+        gap:14px;
+        grid-template-columns: repeat(3, minmax(220px, 1fr));
+        align-items:stretch;
+      }
+      .spine-tile{
+        background:#fff;
+        border:1px solid var(--border);
+        border-radius:16px;
+        padding:14px;
+        text-align:left;
+        box-shadow:0 2px 10px rgba(0,0,0,.04);
+      }
+      .spine-tile .top{
+        display:flex;
+        align-items:center;
+        gap:10px;
+        margin-bottom:8px;
+      }
+      .spine-tile .top i{
+        font-size:18px;
+        color:var(--primary);
+      }
+      .spine-tile .title{
+        font-weight:900;
+        color:var(--primary);
+        font-size:15px;
+        line-height:1.1;
+      }
+      .spine-tile .desc{
+        margin:0;
+        color:var(--text-dim);
+        font-size:13.5px;
+        line-height:1.45;
+      }
+
+      /* Minister callout */
+      .min-callout{
+        width:100%;
+        max-width:var(--maxRowW);
+        background:#fff;
+        border:1px solid var(--border);
+        border-radius:16px;
+        padding:12px 14px;
+        text-align:left;
+      }
+      .min-callout strong{ color:var(--primary); }
+
+      /* References slide */
+      .refs{
+        width:100%;
+        max-width:var(--maxRowW);
+        text-align:left;
+        background:#fff;
+        border:1px solid var(--border);
+        border-radius:16px;
+        padding:14px;
+      }
+      .refs h3{
+        margin:0 0 10px;
+        color:var(--primary);
+        font-size:16px;
+      }
+      .refs ol{
+        margin:0;
+        padding-left:18px;
+        color:var(--text-dim);
+        line-height:1.45;
+        font-size:13.2px;
+      }
+
+      /* Controls & pager */
+      .controls{
+        position:fixed;
+        bottom:18px;
+        left:0;
+        right:0;
+        display:flex;
+        align-items:center;
+        justify-content:center;
+        gap:10px;
+        z-index:11;
+        flex-wrap:wrap;
+      }
+      .btn{
+        background:var(--primary);
+        border:0;
+        color:#fff;
+        padding:10px 14px;
+        border-radius:12px;
+        cursor:pointer;
+        font-weight:800;
+      }
+      .btn.alt{
+        background:#fff;
+        color:var(--primary);
+        border:1px solid var(--primary);
+      }
+      .btn.icon-only{
+        width:40px;
+        height:40px;
+        padding:0;
+        display:grid;
+        place-items:center;
+        border-radius:999px;
+      }
+      .btn:hover{
+        background:var(--secondary);
+        color:#111;
+      }
+      .pager-wrap{
+        display:flex;
+        align-items:center;
+        gap:8px;
+      }
+      .pager{
+        display:flex;
+        align-items:center;
+        gap:6px;
+        max-width:min(1200px,64vw);
+        overflow-x:auto;
+        padding:6px 8px;
+        background:#fff;
+        border:1px solid var(--border);
+        border-radius:999px;
+        box-shadow:var(--shadow);
+        transition:max-width var(--slideAnim) ease, transform var(--slideAnim) ease, opacity var(--slideAnim) ease, padding var(--slideAnim) ease;
+      }
+      .pager .dot{
+        min-width:34px;
+        height:34px;
+        border-radius:999px;
+        border:1px solid var(--border);
+        background:#fff;
+        color:var(--primary);
+        display:grid;
+        place-items:center;
+        font-weight:900;
+        cursor:pointer;
+        user-select:none;
+      }
+      .pager .dot.active{
+        background:var(--secondary);
+        color:#111;
+        border-color:var(--secondary);
+      }
+      .pager-wrap.collapsed .pager{
+        max-width:0;
+        padding:0;
+        opacity:0;
+        transform:scale(.85);
+        pointer-events:none;
+      }
+
+      /* Responsive */
+      @media (max-width: 980px){
+        .spine-grid{ grid-template-columns: repeat(2, minmax(220px, 1fr)); }
+      }
+      @media (max-width: 860px){
+        :root{ --headerH: 60px; }
+        header{ padding:0 12px; }
+        header img{ height:36px; }
+        header .title{ font-size:12px; max-width:52vw; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+        header .badge{ display:none; }
+
+        .deck{ inset:var(--headerH) 0 58px 0; }
+        .slide{
+          width:96vw;
+          height:calc(var(--vh,1vh)*75);
+          border-radius:16px;
+          padding:18px 18px 24px;
+        }
+
+        section.title-slide h1{ font-size:clamp(34px, 6vw, 46px); }
+        section.title-slide .sub{ font-size:clamp(16px, 3.5vw, 20px); }
+        .slide h1{ font-size:clamp(20px, 4.4vw, 28px); }
+
+        .row.cols-2,.row.cols-3,.row.cols-4,.row.cols-split{ grid-template-columns:1fr; }
+        .pager{ max-width:72vw; }
+        .chart-box{ min-height:clamp(170px, 34vh, 260px); }
+      }
+      @media (max-width: 620px){
+        .spine-grid{ grid-template-columns: 1fr; }
+      }
+
+      @media (prefers-reduced-motion: reduce){
+        *{
+          animation-duration:.001ms !important;
+          animation-iteration-count:1 !important;
+          transition-duration:.001ms !important;
+          scroll-behaviour:auto !important;
+        }
+      }
+
+      @media print{
+        header,.controls{ display:none; }
+        .deck{ position:static; inset:auto; }
+        .slide{
+          position:static;
+          opacity:1;
+          transform:none;
+          display:block;
+          height:auto;
+          page-break-after:always;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <header>
+      <img alt="MIIC Logo" src="https://i.imgur.com/NIC3swW.png" />
+      <div class="title">MIIC Management Structure Reform Framework</div>
+      <div class="badge">Post–Hurricane Melissa | Governance, Delivery, Resilience</div>
+      <div class="hdr-progress"><div id="progressBar"></div></div>
+    </header>
+
+    <div class="deck" id="deck">
+      <!-- 0: Title -->
+      <section class="slide title-slide active" data-duration="60">
+        <div class="kicker"><i class="fa-solid fa-sitemap"></i> Governance Spine for Faster Delivery</div>
+        <h1>From Recovery to Results</h1>
+        <div class="sub">Management Structure Reform Framework for MIIC (Ministry and Portfolio Agencies)</div>
+        <div class="sub" style="margin-bottom:6px">Phased implementation over 18 months</div>
+        <div class="meta">
+          <span class="pill"><i class="fa-solid fa-bolt"></i> Clear decision rights</span>
+          <span class="pill"><i class="fa-solid fa-chart-line"></i> Scorecards and cadence</span>
+          <span class="pill"><i class="fa-solid fa-shield-halved"></i> Crisis readiness</span>
+          <span class="pill"><i class="fa-solid fa-microchip"></i> Digital and AI enablement</span>
+        </div>
+        <div class="note">Keyboard: ← → to navigate. Press “P” to toggle slide pager.</div>
+      </section>
+
+      <!-- 1: Context -->
+      <section class="slide" data-duration="90">
+        <h1><i class="fa-solid fa-triangle-exclamation"></i> Why this reform now</h1>
+        <div class="row cols-2 left">
+          <div class="card">
+            <h3>Post–Hurricane Melissa operating reality</h3>
+            <ul class="bullets">
+              <li>Volatility highlighted predictable coordination pressure points across functions and agencies.</li>
+              <li>MIIC must absorb and deploy recovery support under fiscal pressure and continuity urgency.</li>
+              <li>This reform strengthens delivery discipline without changing the mission.</li>
+            </ul>
+          </div>
+          <div class="card callout">
+            <h3>Scale of the shock</h3>
+            <ul class="bullets">
+              <li>Estimated damages: <strong>US$8.8B</strong></li>
+              <li>Recovery package pledged: <strong>US$6.7B</strong> (including institutional strengthening support)</li>
+              <li>Implication: governance must support speed, coordination, and accountable execution.</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <!-- 2: What success looks like -->
+      <section class="slide" data-duration="95">
+        <h1><i class="fa-solid fa-bullseye"></i> What success looks like</h1>
+        <div class="row cols-3 left">
+          <div class="card">
+            <h3><i class="fa-solid fa-gavel"></i> Faster decisions</h3>
+            <ul class="bullets">
+              <li>Routine decisions delegated with clear limits.</li>
+              <li>Escalation paths are predictable and time-bound.</li>
+              <li>Emergency pre-delegations activate under shock conditions.</li>
+            </ul>
+          </div>
+          <div class="card">
+            <h3><i class="fa-solid fa-chart-simple"></i> Visible delivery</h3>
+            <ul class="bullets">
+              <li>Monthly ministry and agency scorecards.</li>
+              <li>Corrective action plans for off-track KPIs.</li>
+              <li>Quarterly deep dives on outcomes (not just activity).</li>
+            </ul>
+          </div>
+          <div class="card">
+            <h3><i class="fa-solid fa-shield"></i> Resilience and continuity</h3>
+            <ul class="bullets">
+              <li>Critical services meet uptime targets.</li>
+              <li>Recovery time meets RTO for critical functions.</li>
+              <li>Regular BCM drills and lessons learned.</li>
+            </ul>
+          </div>
+        </div>
+        <div class="note">Targets are finalised from baselines and ambition levels during implementation.</div>
+      </section>
+
+      <!-- 3: Minister role (explicit) -->
+      <section class="slide" data-duration="85">
+        <h1><i class="fa-solid fa-user-shield"></i> Where the Minister fits</h1>
+        <div class="sub">Clear lines protect good governance and keep delivery moving</div>
+        <div class="row cols-2 left">
+          <div class="card">
+            <h3>Minister (political executive)</h3>
+            <ul class="bullets">
+              <li>Sets strategic direction and policy priorities for the portfolio.</li>
+              <li>Approves major policy positions, sensitive matters, and submissions that require political sign-off.</li>
+              <li>Receives a concise performance brief (monthly) and outcome deep dives (quarterly).</li>
+            </ul>
+          </div>
+          <div class="card callout">
+            <h3>Permanent Secretary (administrative head)</h3>
+            <ul class="bullets">
+              <li>Leads implementation, management discipline, and day-to-day execution.</li>
+              <li>Owns the governance cadence, delegations, and delivery routines.</li>
+              <li>Ensures agencies are unblocked, supported, and held to visible performance commitments.</li>
+            </ul>
+          </div>
+        </div>
+        <div class="note">This framework strengthens clarity and throughput. It is not a critique of the current team’s intent or effort.</div>
+      </section>
+
+      <!-- 4: Case studies (comparison) -->
+      <section class="slide" data-duration="110">
+        <h1><i class="fa-solid fa-scale-balanced"></i> Case studies: what faster governance looks like</h1>
+        <div class="sub">Design patterns that prioritise speed, clarity, and delivery visibility</div>
+
+        <div class="row cols-3 left">
+          <div class="card">
+            <h3><i class="fa-solid fa-building"></i> Alphabet</h3>
+            <ul class="bullets">
+              <li>Separation by lines of business for clearer accountability.</li>
+              <li>Portfolio reporting that makes trade-offs visible.</li>
+              <li>Takeaway: clarity improves speed when ownership is explicit.</li>
+            </ul>
+          </div>
+
+          <div class="card">
+            <h3><i class="fa-solid fa-film"></i> Disney</h3>
+            <ul class="bullets">
+              <li>Operating model shifts to strengthen performance visibility.</li>
+              <li>Centralised portfolio view reduces internal friction.</li>
+              <li>Takeaway: one performance “truth” accelerates decisions.</li>
+            </ul>
+          </div>
+
+          <div class="card callout">
+            <h3><i class="fa-solid fa-bottle-water"></i> Coca-Cola</h3>
+            <ul class="bullets">
+              <li>Simplified model aimed at speed and agility.</li>
+              <li>Decision-making closer to execution with guardrails.</li>
+              <li>Takeaway: decentralise delivery, standardise controls.</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="note">These examples are used for patterns, not as direct copies.</div>
+      </section>
+
+      <!-- 5: Case study takeaways mapped to MIIC -->
+      <section class="slide" data-duration="110">
+        <h1><i class="fa-solid fa-link"></i> What MIIC borrows from these patterns</h1>
+        <div class="sub">Translate “why it worked” into public-sector governance that runs monthly</div>
+
+        <div class="row cols-3 left">
+          <div class="card">
+            <h3><i class="fa-solid fa-gavel"></i> Decision clarity</h3>
+            <ul class="bullets">
+              <li>Define decision rights, thresholds, and escalation once.</li>
+              <li>Then enforce consistently through cadence and templates.</li>
+            </ul>
+          </div>
+
+          <div class="card">
+            <h3><i class="fa-solid fa-chart-line"></i> One delivery scoreboard</h3>
+            <ul class="bullets">
+              <li>Single set of KPIs and a monthly review rhythm.</li>
+              <li>Action logs with owners and due dates, not “updates”.</li>
+            </ul>
+          </div>
+
+          <div class="card callout">
+            <h3><i class="fa-solid fa-network-wired"></i> Frontline delivery</h3>
+            <ul class="bullets">
+              <li>Clusters execute closer to citizens and businesses.</li>
+              <li>Controls: ISO-aligned routines, risk discipline, transparent reporting.</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <!-- 6: Governance Spine -->
+      <section class="slide" data-duration="105">
+        <h1><i class="fa-solid fa-diagram-project"></i> The New Governance Spine</h1>
+        <div class="sub">A simple overlay that makes decision-making faster, delivery visible, and continuity real</div>
+
+        <div class="spine-grid">
+          <div class="spine-tile">
+            <div class="top"><i class="fa-solid fa-gavel"></i><div class="title">Decision Rights</div></div>
+            <p class="desc">RACI/RAPID mapping for policy, operations, procurement, crisis decisions, and digital/AI approvals.</p>
+          </div>
+
+          <div class="spine-tile">
+            <div class="top"><i class="fa-solid fa-people-group"></i><div class="title">Lean Committees</div></div>
+            <p class="desc">Small set of specialised committees with TORs, dashboards, decision authority, and escalation rules.</p>
+          </div>
+
+          <div class="spine-tile">
+            <div class="top"><i class="fa-solid fa-chart-line"></i><div class="title">Delivery Unit</div></div>
+            <p class="desc">Monthly scorecards, action logs, corrective action follow-through, and cross-portfolio unblocking.</p>
+          </div>
+
+          <div class="spine-tile">
+            <div class="top"><i class="fa-solid fa-certificate"></i><div class="title">ISO-Aligned Controls</div></div>
+            <p class="desc">Practical management system: ISO 9001 (quality) + ISO 22301 (continuity) + risk discipline.</p>
+          </div>
+
+          <div class="spine-tile">
+            <div class="top"><i class="fa-solid fa-shield-halved"></i><div class="title">Crisis Readiness</div></div>
+            <p class="desc">Rapid-response mode, pre-delegations, continuity targets, drills, and after-action improvements.</p>
+          </div>
+
+          <div class="spine-tile">
+            <div class="top"><i class="fa-solid fa-microchip"></i><div class="title">Digital &amp; AI Governance</div></div>
+            <p class="desc">Data owners, dashboard routines, safe AI use-cases, privacy/ethics controls, and procurement guardrails.</p>
+          </div>
+
+          <div class="spine-tile" style="border:2px solid rgba(251,175,64,.85); background:linear-gradient(180deg,#fff,rgba(251,175,64,.08))">
+            <div class="top"><i class="fa-solid fa-network-wired"></i><div class="title">Cluster Delivery</div></div>
+            <p class="desc">Agencies execute closer to the frontline, with accountability contracts, scorecards, and escalation.</p>
+          </div>
+        </div>
+
+        <div class="min-callout" style="margin-top:12px;">
+          <strong>Ministerial oversight:</strong> Minister sets direction and signs off on high-sensitivity or major policy items. The PS runs the operating cadence and delivery routines within that direction.
+        </div>
+
+        <div class="note">This spine works in “normal mode” and tightens automatically in “crisis mode”.</div>
+      </section>
+
+      <!-- 7: What changes (summary) -->
+      <section class="slide" data-duration="100">
+        <h1><i class="fa-solid fa-wand-magic-sparkles"></i> What changes, practically</h1>
+        <div class="row cols-2 left">
+          <div class="card">
+            <h3>From</h3>
+            <ul class="bullets">
+              <li>Authority and escalation that can be unclear across workflows.</li>
+              <li>Meetings that do not always convert into decisions and action logs.</li>
+              <li>Reporting that is fragmented and difficult to compare across agencies.</li>
+              <li>Continuity planning that needs regular testing and reinforcement.</li>
+            </ul>
+          </div>
+          <div class="card callout">
+            <h3>To</h3>
+            <ul class="bullets">
+              <li>Decision rights mapped per major process and used consistently.</li>
+              <li>Lean governance committees with TORs, cadence, and decision outputs.</li>
+              <li>Delivery Unit compiles scorecards, flags issues, and drives follow-through.</li>
+              <li>ISO-aligned documentation, drills, and embedded risk routines.</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <!-- 8: Governance and operating model (org blocks) -->
+      <section class="slide" data-duration="120">
+        <h1><i class="fa-solid fa-sitemap"></i> Governance and operating model (at a glance)</h1>
+        <div class="org">
+          <div class="tier cols-1">
+            <div class="box accent">
+              <div class="top"><i class="fa-solid fa-user-check"></i> Minister</div>
+              <ul>
+                <li>Sets policy direction and priorities for the portfolio.</li>
+                <li>Receives monthly performance summary and quarterly outcome deep dives.</li>
+                <li>Provides political sponsorship for cross-ministry coordination and major submissions.</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="tier cols-1">
+            <div class="box accent">
+              <div class="top"><i class="fa-solid fa-user-tie"></i> Permanent Secretary (PS)</div>
+              <ul>
+                <li>Owns the governance spine, delegations, and core cadence.</li>
+                <li>Issues interim delegation memo and reinforces decision protocols.</li>
+                <li>Ensures follow-through through the Delivery Unit and committee rhythms.</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="tier cols-4">
+            <div class="box">
+              <div class="top"><i class="fa-solid fa-compass"></i> Strategy Committee</div>
+              <ul>
+                <li>Strategic priorities and cross-portfolio alignment</li>
+                <li>Quarterly deep dives</li>
+              </ul>
+            </div>
+            <div class="box">
+              <div class="top"><i class="fa-solid fa-chart-line"></i> Performance and Delivery Committee</div>
+              <ul>
+                <li>Monthly scorecards, corrective actions</li>
+                <li>Chaired with Delivery Unit support</li>
+              </ul>
+            </div>
+            <div class="box">
+              <div class="top"><i class="fa-solid fa-shield-halved"></i> Crisis Resilience Committee</div>
+              <ul>
+                <li>BCM, drills, emergency delegations</li>
+                <li>Operational readiness</li>
+              </ul>
+            </div>
+            <div class="box">
+              <div class="top"><i class="fa-solid fa-microchip"></i> Digital and AI Committee</div>
+              <ul>
+                <li>Data governance and safe innovation</li>
+                <li>Service digitisation</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="tier cols-2">
+            <div class="box callout">
+              <div class="top"><i class="fa-solid fa-clipboard-check"></i> Delivery Unit (Performance and Delivery)</div>
+              <ul>
+                <li>Compiles ministry and agency scorecards</li>
+                <li>Flags discrepancies and drives follow-through</li>
+                <li>Maintains action logs and due dates</li>
+              </ul>
+            </div>
+            <div class="box">
+              <div class="top"><i class="fa-solid fa-layer-group"></i> Cluster delivery (agency execution)</div>
+              <ul>
+                <li>Portfolio clusters execute with clear accountabilities</li>
+                <li>Performance is visible, comparable, and acted on</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 9: Decision rights -->
+      <section class="slide" data-duration="115">
+        <h1><i class="fa-solid fa-gavel"></i> Decision rights and escalation</h1>
+        <div class="row cols-2 left">
+          <div class="card">
+            <h3>Decision clarity tools</h3>
+            <ul class="bullets">
+              <li><strong>RACI</strong>: Responsible, Accountable, Consulted, Informed for each major process.</li>
+              <li><strong>RAPID</strong>: Recommend, Agree, Perform, Input, Decide for high-stakes decisions.</li>
+              <li>Routine approvals delegated downward with controls.</li>
+              <li>Pre-delegations defined for emergencies so action does not stall.</li>
+              <li><strong>Minister boundary</strong>: policy direction, sensitive matters, and major submissions remain clearly identified for Ministerial sign-off.</li>
+            </ul>
+          </div>
+          <div class="card callout">
+            <h3>Immediate quick win (Month 1)</h3>
+            <ul class="bullets">
+              <li>PS issues a decision-rights clarification memo (interim delegations and protocols).</li>
+              <li>Where relevant, the Minister endorses the direction so the operating signal is unambiguous.</li>
+              <li>Creates fast relief from minor bottlenecks without waiting on perfect systems.</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <!-- 10: Cadence -->
+      <section class="slide" data-duration="105">
+        <h1><i class="fa-solid fa-calendar-check"></i> Cadence that creates execution</h1>
+        <div class="row cols-3 left">
+          <div class="card">
+            <h3>Weekly</h3>
+            <ul class="bullets">
+              <li>Reform Steering Team troubleshooting and unblocking.</li>
+              <li>Short, decision-oriented agenda.</li>
+            </ul>
+          </div>
+          <div class="card">
+            <h3>Monthly</h3>
+            <ul class="bullets">
+              <li>Performance and Delivery Committee reviews scorecards.</li>
+              <li>Deep dive on red KPIs and corrective action plans.</li>
+              <li>Delivery Unit circulates scorecards ahead of meeting.</li>
+            </ul>
+          </div>
+          <div class="card callout">
+            <h3>Quarterly</h3>
+            <ul class="bullets">
+              <li>Strategy Committee deep dive on outcomes and constraints.</li>
+              <li>Minister receives a focused outcomes brief to support priority decisions and external reporting.</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <!-- 11: Performance system -->
+      <section class="slide" data-duration="120">
+        <h1><i class="fa-solid fa-chart-simple"></i> Performance and Delivery System</h1>
+        <div class="row cols-split left">
+          <div class="card">
+            <h3>How it works</h3>
+            <ul class="bullets">
+              <li>Delivery Unit compiles ministry and agency scorecards from the KPI library.</li>
+              <li>Consistency checks, discrepancy flags, and RAG status applied.</li>
+              <li>Monthly review follows a disciplined agenda: outcomes first, then off-track KPIs, then corrective actions.</li>
+              <li>Corrective action plans are owned, dated, and followed up.</li>
+            </ul>
+            <div class="note">This creates transparency and makes delivery visible without adding noise.</div>
+          </div>
+          <div class="card callout">
+            <h3>Minister touchpoint</h3>
+            <ul class="bullets">
+              <li>Monthly: short dashboard summary for awareness and alignment.</li>
+              <li>Quarterly: outcome deep dive for priority decisions and external commitments.</li>
+              <li>Escalation: issues that require political direction are clearly flagged, not blended into routine ops.</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <!-- 12: KPI targets (chart) -->
+      <section class="slide" data-duration="115">
+        <h1><i class="fa-solid fa-table-list"></i> KPI library: example targets</h1>
+        <div class="row cols-2 left">
+          <div class="card">
+            <h3>Illustrative targets (set against baselines)</h3>
+            <ul class="bullets">
+              <li>Continuity: 95% critical services with no downtime.</li>
+              <li>Continuity: 2 BCM drills per year, 100% pass.</li>
+              <li>Digital: 80% of services online by Q4.</li>
+              <li>Digital: 100% managers using dashboard monthly.</li>
+              <li>Performance: 85% KPIs green or amber; 100% off-track have action plans.</li>
+              <li>Governance: 100% timely board reporting.</li>
+            </ul>
+            <div class="note">Targets shown here are illustrative and finalised based on baselines.</div>
+          </div>
+          <div class="card chart-card">
+            <h3>Target snapshot (% or pass rate)</h3>
+            <div class="chart-box compact">
+              <canvas id="kpiChart"></canvas>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 13: Crisis readiness -->
+      <section class="slide" data-duration="120">
+        <h1><i class="fa-solid fa-shield-halved"></i> Crisis readiness and continuity (ISO 22301)</h1>
+        <div class="row cols-2 left">
+          <div class="card">
+            <h3>What is implemented</h3>
+            <ul class="bullets">
+              <li>Business continuity policy, impact analysis, continuity plans for critical activities.</li>
+              <li>Clear crisis roles and responsibilities; drills and exercises to validate plans.</li>
+              <li>Committee oversight that turns plans into routine practice.</li>
+              <li>Option to target external audit or certification by 2026 to lock in discipline.</li>
+            </ul>
+          </div>
+          <div class="card callout">
+            <h3>Minister in crisis mode</h3>
+            <ul class="bullets">
+              <li>Sets political direction on sensitive matters and public messaging.</li>
+              <li>Receives rapid updates on critical services, high-impact risks, and public-facing actions.</li>
+              <li>PS runs execution through pre-delegations and continuity routines.</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <!-- 14: Digital and AI enablement -->
+      <section class="slide" data-duration="110">
+        <h1><i class="fa-solid fa-microchip"></i> Digital and AI enablement</h1>
+        <div class="row cols-3 left">
+          <div class="card">
+            <h3>Digital service migration</h3>
+            <ul class="bullets">
+              <li>Track % of services offered online and usage rates.</li>
+              <li>Use quarterly reviews to keep major IT projects on track.</li>
+            </ul>
+          </div>
+          <div class="card">
+            <h3>Data-driven management</h3>
+            <ul class="bullets">
+              <li>Dashboards become standard input to management decisions.</li>
+              <li>Delivery Unit supports data consistency and credibility.</li>
+            </ul>
+          </div>
+          <div class="card callout">
+            <h3>Approval clarity</h3>
+            <ul class="bullets">
+              <li>PS approves operational delivery and governance routines.</li>
+              <li>Minister sign-off is clearly defined for high-sensitivity items and major submissions.</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <!-- 15: Capacity and people -->
+      <section class="slide" data-duration="105">
+        <h1><i class="fa-solid fa-people-arrows"></i> Capacity and people plan</h1>
+        <div class="row cols-2 left">
+          <div class="card">
+            <h3>Small state approach</h3>
+            <ul class="bullets">
+              <li>Multi-skilling: secondary skills that increase agility during crises.</li>
+              <li>Work stays interesting and can support retention.</li>
+              <li>Targeted skill injection where capacity is thin.</li>
+            </ul>
+          </div>
+          <div class="card callout">
+            <h3>How capacity is measured</h3>
+            <ul class="bullets">
+              <li>Turnover rate, critical vacancies filled, training hours per employee.</li>
+              <li>Staff survey indicators (workload and morale).</li>
+              <li>% of reform action items delivered on time (capacity sufficiency signal).</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <!-- 16: Roadmap -->
+      <section class="slide" data-duration="130">
+        <h1><i class="fa-solid fa-route"></i> Implementation roadmap (18 months)</h1>
+        <div class="row cols-3 left">
+          <div class="card">
+            <h3>Phase 1 (0–90 days)</h3>
+            <ul class="bullets">
+              <li>Form Reform Steering Team, meet weekly.</li>
+              <li>Emergency continuity fixes and stabilisation.</li>
+              <li>Decision-rights clarification memo (Month 1).</li>
+              <li>Performance monitoring (lite version) begins in Month 1.</li>
+            </ul>
+          </div>
+          <div class="card">
+            <h3>Phase 2 (3–9 months)</h3>
+            <ul class="bullets">
+              <li>Build the full KPI library and data routines.</li>
+              <li>Formalise committee TORs, templates, and reporting packs.</li>
+              <li>Training and workshops to embed new behaviours.</li>
+              <li>Initial IT and digital upgrades to support dashboards.</li>
+            </ul>
+          </div>
+          <div class="card callout">
+            <h3>Phase 3 (9–18 months)</h3>
+            <ul class="bullets">
+              <li>ISO maturity and continuous improvement routines.</li>
+              <li>Scale successful digital and AI pilots.</li>
+              <li>Institutionalise practices so they are not person-dependent.</li>
+              <li>Optional ISO audits (Quality and Continuity) to lock in discipline.</li>
+            </ul>
+          </div>
+        </div>
+        <div class="note">Minister receives quarterly outcome reviews to support portfolio prioritisation and external commitments.</div>
+      </section>
+
+      <!-- 17: Resourcing (chart) -->
+      <section class="slide" data-duration="120">
+        <h1><i class="fa-solid fa-coins"></i> Resourcing and cost profile</h1>
+        <div class="row cols-2 left">
+          <div class="card">
+            <h3>Working assumptions (incremental)</h3>
+            <ul class="bullets">
+              <li>Phase 2 costs include contract hires/consultants, training workshops, and initial digital spend.</li>
+              <li>Phase 3 includes possible ISO audit fees and additional scaling for tech.</li>
+              <li>Funding mix: reallocation plus donor technical assistance where feasible.</li>
+            </ul>
+            <div class="note">Figures are planning ranges to guide budgeting conversations.</div>
+          </div>
+          <div class="card chart-card">
+            <h3>Budget ranges (J$M)</h3>
+            <div class="chart-box">
+              <canvas id="budgetChart"></canvas>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 18: Risks -->
+      <section class="slide" data-duration="120">
+        <h1><i class="fa-solid fa-triangle-exclamation"></i> Key risks and mitigations</h1>
+        <div class="row cols-3 left">
+          <div class="card">
+            <h3>Coordination breakdown</h3>
+            <ul class="bullets">
+              <li>Risk: agencies drift back into silos under pressure.</li>
+              <li>Mitigation: clear roles, buy-in, performance commitments, early intervention.</li>
+              <li>Early warning: missing data, repeated delays, unresolved blockers.</li>
+            </ul>
+          </div>
+          <div class="card">
+            <h3>Reform fatigue</h3>
+            <ul class="bullets">
+              <li>Risk: overload slows adoption.</li>
+              <li>Mitigation: pace via roadmap, quick wins, clear comms, champions.</li>
+              <li>Early warning: morale drop, training participation falls, rising churn.</li>
+            </ul>
+          </div>
+          <div class="card callout">
+            <h3>Data limitations</h3>
+            <ul class="bullets">
+              <li>Risk: weak data undermines confidence in scorecards.</li>
+              <li>Mitigation: early focus on governance, cleaning, and standardised collection.</li>
+              <li>Early warning: inconsistent metrics and repeated discrepancies.</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <!-- 19: References -->
+      <section class="slide" data-duration="90">
+        <h1><i class="fa-solid fa-book"></i> References (case study placeholders)</h1>
+        <div class="refs">
+          <h3>Keep or replace with your preferred sources</h3>
+          <ol>
+            <li>Alphabet Inc. Annual reporting materials (holding company structure and segment reporting).</li>
+            <li>The Walt Disney Company reporting materials (operating model and distribution focus).</li>
+            <li>The Coca-Cola Company public announcements (operating model and agility reset).</li>
+          </ol>
+        </div>
+        <div class="note">Swap these with your official references or local examples as needed.</div>
+      </section>
+
+      <!-- 20: Closing -->
+      <section class="slide" data-duration="85">
+        <h1><i class="fa-solid fa-flag-checkered"></i> Close: what we decide today</h1>
+        <div class="row cols-2 left">
+          <div class="card">
+            <h3>Decision points</h3>
+            <ul class="bullets">
+              <li>Confirm the governance spine (committees, cadence, Delivery Unit mandate).</li>
+              <li>Approve interim delegation memo and decision-rights mapping approach.</li>
+              <li>Confirm the Minister’s reporting touchpoints (monthly summary, quarterly deep dives, escalation triggers).</li>
+            </ul>
+          </div>
+          <div class="card callout">
+            <h3>Next steps (first 30 days)</h3>
+            <ul class="bullets">
+              <li>Form Steering Team and schedule weekly meetings.</li>
+              <li>Issue decision-rights memo and publish escalation map.</li>
+              <li>Identify first KPI set and run the first performance review.</li>
+              <li>Stabilise critical services and confirm continuity leads.</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <div class="controls">
+      <button class="btn" id="prev">◀ Prev</button>
+      <div class="pager-wrap collapsed" id="pagerWrap">
+        <div class="pager" id="pager" aria-label="Slide navigation"></div>
+        <button class="btn alt icon-only" id="pagerToggle" title="Toggle pager">
+          <i class="fa-solid fa-ellipsis-vertical"></i>
+        </button>
+      </div>
+      <button class="btn" id="next">Next ▶</button>
+    </div>
+
+    <script>
+      // Mobile vh fix
+      function setVH(){ document.documentElement.style.setProperty('--vh', `${window.innerHeight * 0.01}px`); }
+      window.addEventListener('resize', setVH);
+      window.addEventListener('orientationchange', setVH);
+      window.addEventListener('load', setVH);
+
+      // Slides
+      const slides = Array.from(document.querySelectorAll('.slide'));
+      const pager = document.getElementById('pager');
+      const pagerWrap = document.getElementById('pagerWrap');
+      const progressBar = document.getElementById('progressBar');
+
+      let idx = slides.findIndex(s => s.classList.contains('active'));
+      if (idx < 0) idx = 0;
+      let animating = false;
+
+      function clamp(n, min, max){ return Math.max(min, Math.min(n, max)); }
+
+      function updateProgress(){
+        const pct = (slides.length <= 1) ? 100 : (idx / (slides.length - 1)) * 100;
+        progressBar.style.width = pct + '%';
+        document.querySelectorAll('#pager .dot').forEach((d, j) => d.classList.toggle('active', j === idx));
+      }
+
+      // ✅ Auto-centre if content fits (prevents “too far up” on short slides)
+      function autoCenter(slide){
+        if (!slide) return;
+        // If a slide ever needs to be forced top-aligned, set: data-nocenter="true"
+        if (slide.dataset.nocenter === "true"){
+          slide.classList.remove('center');
+          return;
+        }
+        // Wait a tick for layout (especially charts)
+        requestAnimationFrame(() => {
+          const fits = slide.scrollHeight <= slide.clientHeight + 2;
+          slide.classList.toggle('center', fits);
+        });
+      }
+
+      function show(i){
+        if (animating) return;
+        const target = clamp(i, 0, slides.length - 1);
+        if (target === idx) return;
+
+        const curr = slides[idx];
+        const next = slides[target];
+
+        animating = true;
+
+        next.classList.add('active');
+        next.style.display = 'flex';
+        if (curr) curr.classList.add('leaving');
+
+        idx = target;
+        updateProgress();
+
+        // reset scroll so you never land mid-slide
+        try { next.scrollTop = 0; } catch(e){}
+
+        // centre if it fits
+        autoCenter(next);
+
+        let finished = false;
+        const done = () => {
+          if (finished) return;
+          finished = true;
+
+          if (curr){
+            curr.classList.remove('active', 'leaving');
+            curr.style.display = 'none';
+          }
+          animating = false;
+
+          // Resize charts and re-check centring after charts render
+          queueMicrotask(() => {
+            Object.values(charts).forEach(ch => ch && ch.resize && ch.resize());
+            autoCenter(next);
+          });
+        };
+
+        setTimeout(done, 450);
+        if (curr) curr.addEventListener('transitionend', done, { once:true });
+      }
+
+      document.getElementById('prev').onclick = () => show(idx - 1);
+      document.getElementById('next').onclick = () => show(idx + 1);
+
+      document.addEventListener('keydown', e => {
+        if (e.key === 'ArrowRight') show(idx + 1);
+        if (e.key === 'ArrowLeft') show(idx - 1);
+        if (e.key.toLowerCase() === 'p') togglePager();
+      });
+
+      function buildPager(){
+        pager.innerHTML = '';
+        slides.forEach((_, i) => {
+          const b = document.createElement('button');
+          b.className = 'dot' + (i === idx ? ' active' : '');
+          b.textContent = (i + 1).toString();
+          b.title = 'Go to slide ' + (i + 1);
+          b.onclick = () => show(i);
+          pager.appendChild(b);
+        });
+      }
+
+      function togglePager(forceOpen){
+        if (forceOpen === true) pagerWrap.classList.remove('collapsed');
+        else if (forceOpen === false) pagerWrap.classList.add('collapsed');
+        else pagerWrap.classList.toggle('collapsed');
+      }
+      document.getElementById('pagerToggle').addEventListener('click', () => togglePager());
+
+      // Charts
+      const brandPrimary = getComputedStyle(document.documentElement).getPropertyValue('--primary').trim();
+      const brandSecondary = getComputedStyle(document.documentElement).getPropertyValue('--secondary').trim();
+      const darkGold = '#d18e2f';
+
+      Chart.defaults.maintainAspectRatio = false;
+      Chart.defaults.responsive = true;
+      Chart.defaults.resizeDelay = 200;
+
+      const charts = {};
+
+      function makeStackedBar(ctx, labels, datasets, yTitle){
+        return new Chart(ctx, {
+          type: 'bar',
+          data: { labels, datasets },
+          options: {
+            responsive:true,
+            maintainAspectRatio:false,
+            layout:{ padding:6 },
+            interaction:{ mode:'nearest', intersect:true },
+            plugins:{
+              legend:{ position:'bottom', labels:{ color:'#333', font:{ size:11 } } },
+              tooltip:{
+                callbacks:{
+                  label: (c) => {
+                    const v = Number(c.parsed.y ?? 0);
+                    const suffix = c.dataset._suffix || '';
+                    return `${c.dataset.label}: ${v.toLocaleString('en-US',{maximumFractionDigits:1})}${suffix}`;
+                  }
+                }
+              }
+            },
+            scales:{
+              x:{ stacked:true, ticks:{ color:'#555', font:{ size:10 } }, grid:{ color:'#eee' } },
+              y:{
+                stacked:true,
+                beginAtZero:true,
+                ticks:{ color:'#555', font:{ size:10 } },
+                title:{ display: !!yTitle, text: yTitle, color:'#555', font:{ size:11, weight:'700' } },
+                grid:{ color:'#eee' }
+              }
+            }
+          }
+        });
+      }
+
+      function initCharts(){
+        // KPI chart: simple % targets
+        const kpiCtx = document.getElementById('kpiChart');
+        if (kpiCtx){
+          const labels = ['Uptime','Drills pass','Services online','Dashboard use','KPIs on track','Board reports'];
+          const vals = [95, 100, 80, 100, 85, 100];
+
+          charts.kpi = new Chart(kpiCtx, {
+            type:'bar',
+            data:{
+              labels,
+              datasets:[{
+                label:'Target (%)',
+                data:vals,
+                backgroundColor:brandSecondary,
+                borderColor:brandSecondary,
+                borderWidth:0,
+                borderRadius:8,
+                maxBarThickness:34
+              }]
+            },
+            options:{
+              responsive:true,
+              maintainAspectRatio:false,
+              layout:{ padding:6 },
+              plugins:{
+                legend:{ position:'bottom', labels:{ color:'#333', font:{ size:11 } } },
+                tooltip:{ callbacks:{ label:(c)=> `Target: ${Number(c.parsed.y).toFixed(0)}%` } }
+              },
+              scales:{
+                x:{ ticks:{ color:'#555', font:{ size:10 } }, grid:{ color:'#eee' } },
+                y:{
+                  beginAtZero:true,
+                  max: 110,
+                  ticks:{ color:'#555', font:{ size:10 }, callback:(v)=> `${v}%` },
+                  grid:{ color:'#eee' }
+                }
+              }
+            }
+          });
+        }
+
+        // Budget ranges (J$M): show minimum + range
+        const bCtx = document.getElementById('budgetChart');
+        if (bCtx){
+          const labels = ['Phase 1', 'Phase 2', 'Phase 3', 'Total'];
+          const mins = [10, 20, 9, 50];
+          const maxs = [20, 30, 14, 60];
+          const ranges = maxs.map((m, i) => m - mins[i]);
+
+          const dsMin = {
+            label:'Minimum (J$M)',
+            data: mins,
+            backgroundColor: brandPrimary,
+            borderColor: brandPrimary,
+            borderWidth:0,
+            borderRadius:8,
+            maxBarThickness:40,
+            _suffix:''
+          };
+          const dsRange = {
+            label:'Range to maximum (J$M)',
+            data: ranges,
+            backgroundColor: darkGold,
+            borderColor: darkGold,
+            borderWidth:0,
+            borderRadius:8,
+            maxBarThickness:40,
+            _suffix:''
+          };
+
+          charts.budget = makeStackedBar(bCtx, labels, [dsMin, dsRange], 'J$M');
+        }
+      }
+
+      function init(){
+        buildPager();
+        updateProgress();
+        initCharts();
+        autoCenter(slides[idx]);
+      }
+
+      window.addEventListener('resize', () => {
+        Object.values(charts).forEach(ch => ch && ch.resize && ch.resize());
+        autoCenter(slides[idx]);
+      });
+      window.addEventListener('load', init);
+    </script>
+  </body>
+</html>
