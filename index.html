@@ -111,12 +111,10 @@
         flex-direction:column;
         align-items:center;
 
-        /* Default: start at top so long slides feel natural */
-        justify-content:flex-start;
+        justify-content:flex-start; /* long slides feel natural */
         text-align:center;
 
-        /* ✅ Scroll fixed */
-        overflow:auto;
+        overflow:auto;                 /* ✅ scroll fixed */
         overscroll-behavior:contain;
         -webkit-overflow-scrolling:touch;
 
@@ -126,10 +124,7 @@
         pointer-events:none;
       }
 
-      /* ✅ Auto-centre class (applied by JS when content fits) */
-      .slide.center{
-        justify-content:center;
-      }
+      .slide.center{ justify-content:center; } /* ✅ auto-centre for short slides */
 
       .slide.active{
         display:flex;
@@ -320,7 +315,7 @@
         background:linear-gradient(180deg,#fff,rgba(251,175,64,.08));
       }
 
-      /* --- Governance Spine (simple grid) --- */
+      /* Governance Spine grid */
       .spine-grid{
         width:100%;
         max-width: var(--maxRowW);
@@ -360,7 +355,6 @@
         line-height:1.45;
       }
 
-      /* Minister callout */
       .min-callout{
         width:100%;
         max-width:var(--maxRowW);
@@ -371,29 +365,6 @@
         text-align:left;
       }
       .min-callout strong{ color:var(--primary); }
-
-      /* References slide */
-      .refs{
-        width:100%;
-        max-width:var(--maxRowW);
-        text-align:left;
-        background:#fff;
-        border:1px solid var(--border);
-        border-radius:16px;
-        padding:14px;
-      }
-      .refs h3{
-        margin:0 0 10px;
-        color:var(--primary);
-        font-size:16px;
-      }
-      .refs ol{
-        margin:0;
-        padding-left:18px;
-        color:var(--text-dim);
-        line-height:1.45;
-        font-size:13.2px;
-      }
 
       /* Controls & pager */
       .controls{
@@ -514,7 +485,7 @@
           animation-duration:.001ms !important;
           animation-iteration-count:1 !important;
           transition-duration:.001ms !important;
-          scroll-behaviour:auto !important;
+          scroll-behavior:auto !important;
         }
       }
 
@@ -612,32 +583,9 @@
         <div class="note">Targets are finalised from baselines and ambition levels during implementation.</div>
       </section>
 
-      <!-- 3: Minister role (explicit) -->
-      <section class="slide" data-duration="85">
-        <h1><i class="fa-solid fa-user-shield"></i> Where the Minister fits</h1>
-        <div class="sub">Clear lines protect good governance and keep delivery moving</div>
-        <div class="row cols-2 left">
-          <div class="card">
-            <h3>Minister (political executive)</h3>
-            <ul class="bullets">
-              <li>Sets strategic direction and policy priorities for the portfolio.</li>
-              <li>Approves major policy positions, sensitive matters, and submissions that require political sign-off.</li>
-              <li>Receives a concise performance brief (monthly) and outcome deep dives (quarterly).</li>
-            </ul>
-          </div>
-          <div class="card callout">
-            <h3>Permanent Secretary (administrative head)</h3>
-            <ul class="bullets">
-              <li>Leads implementation, management discipline, and day-to-day execution.</li>
-              <li>Owns the governance cadence, delegations, and delivery routines.</li>
-              <li>Ensures agencies are unblocked, supported, and held to visible performance commitments.</li>
-            </ul>
-          </div>
-        </div>
-        <div class="note">This framework strengthens clarity and throughput. It is not a critique of the current team’s intent or effort.</div>
-      </section>
+      <!-- (Removed page 4 entirely) -->
 
-      <!-- 4: Case studies (comparison) -->
+      <!-- Case studies (comparison) -->
       <section class="slide" data-duration="110">
         <h1><i class="fa-solid fa-scale-balanced"></i> Case studies: what faster governance looks like</h1>
         <div class="sub">Design patterns that prioritise speed, clarity, and delivery visibility</div>
@@ -674,7 +622,7 @@
         <div class="note">These examples are used for patterns, not as direct copies.</div>
       </section>
 
-      <!-- 5: Case study takeaways mapped to MIIC -->
+      <!-- Case study takeaways mapped to MIIC -->
       <section class="slide" data-duration="110">
         <h1><i class="fa-solid fa-link"></i> What MIIC borrows from these patterns</h1>
         <div class="sub">Translate “why it worked” into public-sector governance that runs monthly</div>
@@ -684,7 +632,7 @@
             <h3><i class="fa-solid fa-gavel"></i> Decision clarity</h3>
             <ul class="bullets">
               <li>Define decision rights, thresholds, and escalation once.</li>
-              <li>Then enforce consistently through cadence and templates.</li>
+              <li>Then reinforce consistently through cadence and templates.</li>
             </ul>
           </div>
 
@@ -706,7 +654,7 @@
         </div>
       </section>
 
-      <!-- 6: Governance Spine -->
+      <!-- Governance Spine -->
       <section class="slide" data-duration="105">
         <h1><i class="fa-solid fa-diagram-project"></i> The New Governance Spine</h1>
         <div class="sub">A simple overlay that makes decision-making faster, delivery visible, and continuity real</div>
@@ -755,7 +703,7 @@
         <div class="note">This spine works in “normal mode” and tightens automatically in “crisis mode”.</div>
       </section>
 
-      <!-- 7: What changes (summary) -->
+      <!-- What changes (summary) -->
       <section class="slide" data-duration="100">
         <h1><i class="fa-solid fa-wand-magic-sparkles"></i> What changes, practically</h1>
         <div class="row cols-2 left">
@@ -780,7 +728,7 @@
         </div>
       </section>
 
-      <!-- 8: Governance and operating model (org blocks) -->
+      <!-- Governance and operating model -->
       <section class="slide" data-duration="120">
         <h1><i class="fa-solid fa-sitemap"></i> Governance and operating model (at a glance)</h1>
         <div class="org">
@@ -857,7 +805,7 @@
         </div>
       </section>
 
-      <!-- 9: Decision rights -->
+      <!-- Decision rights -->
       <section class="slide" data-duration="115">
         <h1><i class="fa-solid fa-gavel"></i> Decision rights and escalation</h1>
         <div class="row cols-2 left">
@@ -882,7 +830,7 @@
         </div>
       </section>
 
-      <!-- 10: Cadence -->
+      <!-- Cadence -->
       <section class="slide" data-duration="105">
         <h1><i class="fa-solid fa-calendar-check"></i> Cadence that creates execution</h1>
         <div class="row cols-3 left">
@@ -911,7 +859,7 @@
         </div>
       </section>
 
-      <!-- 11: Performance system -->
+      <!-- Performance system -->
       <section class="slide" data-duration="120">
         <h1><i class="fa-solid fa-chart-simple"></i> Performance and Delivery System</h1>
         <div class="row cols-split left">
@@ -936,7 +884,7 @@
         </div>
       </section>
 
-      <!-- 12: KPI targets (chart) -->
+      <!-- KPI targets (chart) -->
       <section class="slide" data-duration="115">
         <h1><i class="fa-solid fa-table-list"></i> KPI library: example targets</h1>
         <div class="row cols-2 left">
@@ -961,7 +909,7 @@
         </div>
       </section>
 
-      <!-- 13: Crisis readiness -->
+      <!-- Crisis readiness -->
       <section class="slide" data-duration="120">
         <h1><i class="fa-solid fa-shield-halved"></i> Crisis readiness and continuity (ISO 22301)</h1>
         <div class="row cols-2 left">
@@ -985,7 +933,7 @@
         </div>
       </section>
 
-      <!-- 14: Digital and AI enablement -->
+      <!-- Digital and AI enablement -->
       <section class="slide" data-duration="110">
         <h1><i class="fa-solid fa-microchip"></i> Digital and AI enablement</h1>
         <div class="row cols-3 left">
@@ -1013,7 +961,7 @@
         </div>
       </section>
 
-      <!-- 15: Capacity and people -->
+      <!-- Capacity and people -->
       <section class="slide" data-duration="105">
         <h1><i class="fa-solid fa-people-arrows"></i> Capacity and people plan</h1>
         <div class="row cols-2 left">
@@ -1036,7 +984,7 @@
         </div>
       </section>
 
-      <!-- 16: Roadmap -->
+      <!-- Roadmap -->
       <section class="slide" data-duration="130">
         <h1><i class="fa-solid fa-route"></i> Implementation roadmap (18 months)</h1>
         <div class="row cols-3 left">
@@ -1071,7 +1019,7 @@
         <div class="note">Minister receives quarterly outcome reviews to support portfolio prioritisation and external commitments.</div>
       </section>
 
-      <!-- 17: Resourcing (chart) -->
+      <!-- Resourcing (chart) -->
       <section class="slide" data-duration="120">
         <h1><i class="fa-solid fa-coins"></i> Resourcing and cost profile</h1>
         <div class="row cols-2 left">
@@ -1093,7 +1041,7 @@
         </div>
       </section>
 
-      <!-- 18: Risks -->
+      <!-- Risks -->
       <section class="slide" data-duration="120">
         <h1><i class="fa-solid fa-triangle-exclamation"></i> Key risks and mitigations</h1>
         <div class="row cols-3 left">
@@ -1124,43 +1072,7 @@
         </div>
       </section>
 
-      <!-- 19: References -->
-      <section class="slide" data-duration="90">
-        <h1><i class="fa-solid fa-book"></i> References (case study placeholders)</h1>
-        <div class="refs">
-          <h3>Keep or replace with your preferred sources</h3>
-          <ol>
-            <li>Alphabet Inc. Annual reporting materials (holding company structure and segment reporting).</li>
-            <li>The Walt Disney Company reporting materials (operating model and distribution focus).</li>
-            <li>The Coca-Cola Company public announcements (operating model and agility reset).</li>
-          </ol>
-        </div>
-        <div class="note">Swap these with your official references or local examples as needed.</div>
-      </section>
-
-      <!-- 20: Closing -->
-      <section class="slide" data-duration="85">
-        <h1><i class="fa-solid fa-flag-checkered"></i> Close: what we decide today</h1>
-        <div class="row cols-2 left">
-          <div class="card">
-            <h3>Decision points</h3>
-            <ul class="bullets">
-              <li>Confirm the governance spine (committees, cadence, Delivery Unit mandate).</li>
-              <li>Approve interim delegation memo and decision-rights mapping approach.</li>
-              <li>Confirm the Minister’s reporting touchpoints (monthly summary, quarterly deep dives, escalation triggers).</li>
-            </ul>
-          </div>
-          <div class="card callout">
-            <h3>Next steps (first 30 days)</h3>
-            <ul class="bullets">
-              <li>Form Steering Team and schedule weekly meetings.</li>
-              <li>Issue decision-rights memo and publish escalation map.</li>
-              <li>Identify first KPI set and run the first performance review.</li>
-              <li>Stabilise critical services and confirm continuity leads.</li>
-            </ul>
-          </div>
-        </div>
-      </section>
+      <!-- (Removed pages 20 and 21 entirely) -->
     </div>
 
     <div class="controls">
@@ -1181,7 +1093,6 @@
       window.addEventListener('orientationchange', setVH);
       window.addEventListener('load', setVH);
 
-      // Slides
       const slides = Array.from(document.querySelectorAll('.slide'));
       const pager = document.getElementById('pager');
       const pagerWrap = document.getElementById('pagerWrap');
@@ -1199,15 +1110,12 @@
         document.querySelectorAll('#pager .dot').forEach((d, j) => d.classList.toggle('active', j === idx));
       }
 
-      // ✅ Auto-centre if content fits (prevents “too far up” on short slides)
       function autoCenter(slide){
         if (!slide) return;
-        // If a slide ever needs to be forced top-aligned, set: data-nocenter="true"
         if (slide.dataset.nocenter === "true"){
           slide.classList.remove('center');
           return;
         }
-        // Wait a tick for layout (especially charts)
         requestAnimationFrame(() => {
           const fits = slide.scrollHeight <= slide.clientHeight + 2;
           slide.classList.toggle('center', fits);
@@ -1231,10 +1139,7 @@
         idx = target;
         updateProgress();
 
-        // reset scroll so you never land mid-slide
         try { next.scrollTop = 0; } catch(e){}
-
-        // centre if it fits
         autoCenter(next);
 
         let finished = false;
@@ -1248,7 +1153,6 @@
           }
           animating = false;
 
-          // Resize charts and re-check centring after charts render
           queueMicrotask(() => {
             Object.values(charts).forEach(ch => ch && ch.resize && ch.resize());
             autoCenter(next);
@@ -1334,7 +1238,6 @@
       }
 
       function initCharts(){
-        // KPI chart: simple % targets
         const kpiCtx = document.getElementById('kpiChart');
         if (kpiCtx){
           const labels = ['Uptime','Drills pass','Services online','Dashboard use','KPIs on track','Board reports'];
@@ -1375,7 +1278,6 @@
           });
         }
 
-        // Budget ranges (J$M): show minimum + range
         const bCtx = document.getElementById('budgetChart');
         if (bCtx){
           const labels = ['Phase 1', 'Phase 2', 'Phase 3', 'Total'];
